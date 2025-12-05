@@ -1,10 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using BestStories.Api.Model.Dtos;
+using System.Collections.Concurrent;
 
 namespace BestStories.Api.Services;
 
-public record StoryDto(string Title, string? Uri, string? PostedBy, string Time, int Score, int CommentCount);
-
-public class StoryService(IHackerNewsClient hackerNewsClient) : IStoryService
+public sealed class StoryService(IHackerNewsClient hackerNewsClient) : IStoryService
 {
     private readonly IHackerNewsClient _hackerNewsClient = hackerNewsClient;
     private readonly int _maxStoriesToScan = 500; // todo: configurable

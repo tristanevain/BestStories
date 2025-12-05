@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using BestStories.Api.Model;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BestStories.Api.Services;
 
-public record Story(int Id, string? By, long Time, string? Title, string? Url, int? Score, int? Descendants, string? Type);
-
-public class HackerNewsClient(IHttpClientFactory httpFactory, IMemoryCache cache, string bestStoriesEndpoint) : IHackerNewsClient
+public sealed class HackerNewsClient(IHttpClientFactory httpFactory, IMemoryCache cache, string bestStoriesEndpoint) : IHackerNewsClient
 {
     private const string BestStoriesCacheKey = "beststoryids";
 

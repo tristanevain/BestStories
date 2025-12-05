@@ -1,4 +1,5 @@
-﻿using BestStories.Api.Services;
+﻿using BestStories.Api.Model;
+using BestStories.Api.Services;
 using NSubstitute;
 
 namespace BestStories.Api.Tests.Services;

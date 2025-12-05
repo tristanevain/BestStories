@@ -1,6 +1,14 @@
 @BestStories.Api_HostAddress = http://localhost:5142
 
-GET {{BestStories.Api_HostAddress}}/weatherforecast/
+GET {{BestStories.Api_HostAddress}}/api/stories/best?n=15
 Accept: application/json
 
 ###
+
+GET {{BestStories.Api_HostAddress}}/api/stories/best?n=-1
+Accept: application/json
+
+###
+
+GET {{BestStories.Api_HostAddress}}/api/stories/best?n=150
+Accept: application/json

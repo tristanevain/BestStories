@@ -1,4 +1,6 @@
 ﻿
+using BestStories.Api.Model;
+
 namespace BestStories.Api.Services
 {
     public interface IHackerNewsClient

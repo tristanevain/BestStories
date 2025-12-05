@@ -1,4 +1,5 @@
-﻿using BestStories.Api.Services;
+﻿using BestStories.Api.Model;
+using BestStories.Api.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;

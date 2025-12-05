@@ -27,7 +27,12 @@ This repository contains a minimal ASP.NET Core implementation that exposes a RE
 Prerequisites: .NET 8, `dotnet` cli.
 
 1. `dotnet run --project src/BestStoriesApi`
-2. Open `http://localhost:5000/api/beststories?n=10`
+2. Open `http://localhost:5142/api/stories/best?n=10`
+
+Alternatively, you can use Docker:
+1. `docker build -f src/BestStories.Api/Dockerfile -t best-stories-api ./src`
+1. `docker run -p 5142:8080 best-stories-api`
+1. Open `http://localhost:5142/api/stories/best?n=10`
 
 You can also change configuration in `appsettings.json` (MaxScan, cache durations, parallelism).
 

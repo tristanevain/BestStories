@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BestStories.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8a792504f0cbd1b747e8047dfa8e60553217f21f")]
 [assembly: System.Reflection.AssemblyProductAttribute("BestStories.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BestStories.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

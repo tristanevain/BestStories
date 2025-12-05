@@ -1,25 +1,30 @@
+using BestStories.Api;
+using BestStories.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+var hackerNewsSettings = builder.Configuration.GetSection("HackerNews");
+var baseUrl = hackerNewsSettings.GetValue<string>("BaseUrl") 
+                ?? throw new InvalidOperationException("HackerNews:BaseUrl configuration is missing.");
+
+
+builder.Services.AddHttpClient(Constants.HackerNewsHttpClientName, client =>
+{
+    client.BaseAddress = new Uri(baseUrl);
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
+
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<HackerNewsClient>();
+builder.Services.AddSingleton<StoriesService>();
+
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
+
 
 app.Run();

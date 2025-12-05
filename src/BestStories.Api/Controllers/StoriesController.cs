@@ -5,12 +5,12 @@ namespace BestStories.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BestStoriesController(IStoryService storyService) : ControllerBase
+public class StoriesController(IStoryService storyService) : ControllerBase
 {
     private readonly IStoryService _storyService = storyService;
 
     [HttpGet]
-    [Route("stories/best")]
+    [Route("best")]
     public async Task<IActionResult> GetBestStories([FromQuery] int n = 10, CancellationToken ct = default)
     {
         if (n <= 0 || n > Constants.MaxN) 

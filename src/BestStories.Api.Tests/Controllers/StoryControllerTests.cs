@@ -12,7 +12,7 @@ public class StoryControllerTests
     {
         // arrange
         var storyServiceMock = Substitute.For<IStoryService>();
-        var controller = new BestStoriesController(storyServiceMock);
+        var controller = new StoriesController(storyServiceMock);
 
         // act
         var result = await controller.GetBestStories(0);
@@ -26,7 +26,7 @@ public class StoryControllerTests
     {
         // arrange
         var storyServiceMock = Substitute.For<IStoryService>();
-        var controller = new BestStoriesController(storyServiceMock);
+        var controller = new StoriesController(storyServiceMock);
 
         // act
         var result = await controller.GetBestStories(Constants.MaxN + 1);
@@ -40,7 +40,7 @@ public class StoryControllerTests
     {
         // arrange
         var storyServiceMock = Substitute.For<IStoryService>();
-        var controller = new BestStoriesController(storyServiceMock);
+        var controller = new StoriesController(storyServiceMock);
 
         // act
         var result = await controller.GetBestStories(Constants.MaxN);

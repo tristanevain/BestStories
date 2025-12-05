@@ -8,15 +8,15 @@ namespace BestStories.Api.Controllers;
 public class BestStoriesController(IStoryService storyService) : ControllerBase
 {
     private readonly IStoryService _storyService = storyService;
-    private const int MaxN = 100; // todo: use settings
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] int n = 10, CancellationToken ct = default)
+    [Route("stories/best")]
+    public async Task<IActionResult> GetBestStories([FromQuery] int n = 10, CancellationToken ct = default)
     {
-        if (n <= 0 || n > MaxN) 
-            return BadRequest($"n must be between 1 and {MaxN}");
+        if (n <= 0 || n > Constants.MaxN) 
+            return BadRequest($"n must be between 1 and {Constants.MaxN}");
 
-        var stories = await _storyService.GetTopByScoreAsync(n, ct);
+        var stories = await _storyService.GetTopStoriesByScoreAsync(n, ct);
 
         return Ok(stories);
     }

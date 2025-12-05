@@ -4,42 +4,43 @@ namespace BestStories.Api.Services;
 
 public record Story(int Id, string? By, long Time, string? Title, string? Url, int? Score, int? Descendants, string? Type);
 
-public class HackerNewsClient(IHttpClientFactory httpFactory, IMemoryCache cache, IConfiguration configuration) : IHackerNewsClient
+public class HackerNewsClient(IHttpClientFactory httpFactory, IMemoryCache cache, string bestStoriesEndpoint) : IHackerNewsClient
 {
+    private const string BestStoriesCacheKey = "beststoryids";
+
     private readonly IHttpClientFactory _httpFactory = httpFactory;
     private readonly IMemoryCache _cache = cache;
-    private readonly string BestStoriesEndpoint = configuration.GetSection("HackerNews")
-                                                               .GetValue<string>("BestStoriesEndpoint")!;
+    private readonly string BestStoriesEndpoint = bestStoriesEndpoint;
 
     public async Task<int[]> GetBestStoryIdsAsync(CancellationToken ct)
     {
-        // cache for short time to avoid hammering HN when many callers ask concurrently
-        var cacheItem = await _cache.GetOrCreateAsync("beststoryids", async entry =>
+        if(!_cache.TryGetValue<int[]>(BestStoriesCacheKey, out var cachedIds))
         {
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30);
             var client = _httpFactory.CreateClient(Constants.HackerNewsHttpClientName);
-
             var response = await client.GetFromJsonAsync<int[]>(BestStoriesEndpoint, ct);
 
-            return response ?? [];
-        });
+            // cache for short time to avoid hammering HN when many callers ask concurrently
+            _cache.Set(BestStoriesCacheKey, response ?? [], TimeSpan.FromSeconds(30));
+            cachedIds = response;
+        }
 
-        return cacheItem ?? [];
+        return cachedIds ?? [];
     }
-
 
     public async Task<Story?> GetStoryAsync(int id, CancellationToken ct)
     {
-        string key = $"item_{id}";
+        string cacheKey = $"item_{id}";
 
-        return await _cache.GetOrCreateAsync(key, async entry =>
+        if(!_cache.TryGetValue<Story?>(cacheKey, out var cachedStory))
         {
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
             var client = _httpFactory.CreateClient(Constants.HackerNewsHttpClientName);
 
             var story = await client.GetFromJsonAsync<Story>($"item/{id}.json", ct);
 
-            return story;
-        });
+            _cache.Set(cacheKey, story, TimeSpan.FromMinutes(5));
+            cachedStory = story;
+        }
+
+        return cachedStory;
     }
 }

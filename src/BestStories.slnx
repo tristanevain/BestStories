@@ -1,4 +1,5 @@
 <Solution>
   <Folder Name="/Solution Items/" />
+  <Project Path="BestStories.Api.Tests/BestStories.Api.Tests.csproj" Id="48ec4717-135e-43d9-b93e-0f398c69ef0b" />
   <Project Path="BestStories.Api/BestStories.Api.csproj" />
 </Solution>

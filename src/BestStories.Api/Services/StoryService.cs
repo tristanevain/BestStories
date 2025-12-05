@@ -11,7 +11,7 @@ public class StoryService(IHackerNewsClient hackerNewsClient) : IStoryService
     private readonly int _maxDegreeOfParallelism = 10; // todo: configurable
 
 
-    public async Task<IEnumerable<StoryDto>> GetTopByScoreAsync(int n, CancellationToken ct)
+    public async Task<IEnumerable<StoryDto>> GetTopStoriesByScoreAsync(int n, CancellationToken ct)
     {
         var ids = await _hackerNewsClient.GetBestStoryIdsAsync(ct);
         if (ids.Length == 0)

@@ -17,7 +17,7 @@ This repository contains a minimal ASP.NET Core implementation that exposes a RE
 
   * `IHttpClientFactory` to reuse connections.
   * An in-memory `IMemoryCache` with a short TTL for the list of IDs and a longer TTL for individual story details.
-  * Bounded parallelism (using a SemaphoreSlim) when fetching story details.
+  * Limited concurrent requests (Bounded parallelism using a SemaphoreSlim) when fetching story details.
 * We cap caller `n` to a reasonable maximum (100, configurable). Validation returns `400 Bad Request` for invalid values.
 
 ---

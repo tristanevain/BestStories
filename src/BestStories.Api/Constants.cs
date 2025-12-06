@@ -2,6 +2,6 @@
 
 public class Constants
 {
+    public const string HackerNewsApiSettingsKey = "HackerNewsApi";
     public const string HackerNewsHttpClientName = "hacker-news";
-    public const int MaxN = 100; // todo: use settings?
 }

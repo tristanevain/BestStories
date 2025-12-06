@@ -1,11 +1,11 @@
 ﻿using BestStories.Api.Model;
 using BestStories.Api.Services;
+using BestStories.Api.Settings;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -19,7 +19,11 @@ public class HackerNewsClientTests
         // arrange
         var memoryCacheMock = Substitute.For<IMemoryCache>();
         var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
-        var configurationMock = Substitute.For<IConfiguration>();
+        var settings = Options.Create(new HackerNewsApiSettings
+        {
+            BaseUrl = "https://hacker-news.firebaseio.com/v0/", // will not be actually called
+            BestStoriesEndpoint = "beststories.json"
+        });
 
         var cachedIds = new int[] { 1, 2, 3, 4, 5 };
         memoryCacheMock.TryGetValue("beststoryids", out Arg.Any<int[]?>())
@@ -29,7 +33,7 @@ public class HackerNewsClientTests
                            return true;             // indicate cache hit
                        });
 
-        var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, "https://hacker-news.firebaseio.com/v0/beststories.json");
+        var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, settings);
 
         // act
         var result = await client.GetBestStoryIdsAsync(CancellationToken.None);
@@ -46,6 +50,11 @@ public class HackerNewsClientTests
         // arrange
         var memoryCacheMock = Substitute.For<IMemoryCache>();
         var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
+        var settings = Options.Create(new HackerNewsApiSettings
+        {
+            BaseUrl = "https://hacker-news.firebaseio.com/v0/", // will not be actually called
+            BestStoriesEndpoint = "beststories.json"
+        });
 
         memoryCacheMock.TryGetValue("beststoryids", out Arg.Any<int[]?>())
                        .Returns(false); // indicate cache miss
@@ -60,11 +69,14 @@ public class HackerNewsClientTests
                 "application/json")
         };
         var handler = new FakeHttpMessageHandler(response);
-        var httpClient = new HttpClient(handler);
+        var httpClient = new HttpClient(handler)
+        {
+            BaseAddress = new Uri(settings.Value.BaseUrl)
+        };
         httpClientFactoryMock.CreateClient(Constants.HackerNewsHttpClientName)
                              .Returns(httpClient);
 
-        var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, "https://hacker-news.firebaseio.com/v0/beststories.json");
+        var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, settings);
 
         // act
         var result = await client.GetBestStoryIdsAsync(CancellationToken.None);
@@ -86,9 +98,14 @@ public class HackerNewsClientTests
         // arrange
         var memoryCacheMock = Substitute.For<IMemoryCache>();
         var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
-        
+        var settings = Options.Create(new HackerNewsApiSettings
+        {
+            BaseUrl = "https://hacker-news.firebaseio.com/v0/", // will not be actually called
+            BestStoriesEndpoint = "beststories.json"
+        });
+
         var cachedStory = new Story(1, "author", 1633036800, "Test Story", "https://example.com", 100, 50, "story");
-        
+
         memoryCacheMock.TryGetValue("item_1", out Arg.Any<Story?>())
                        .Returns(callInfo =>
                        {
@@ -96,11 +113,11 @@ public class HackerNewsClientTests
                            return true;               // indicate cache hit
                        });
 
-        var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, "https://hacker-news.firebaseio.com/v0/beststories.json");
-        
+        var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, settings);
+
         // act
         var result = await client.GetStoryAsync(1, CancellationToken.None);
-        
+
         // assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(cachedStory);
@@ -113,11 +130,17 @@ public class HackerNewsClientTests
         // arrange
         var memoryCacheMock = Substitute.For<IMemoryCache>();
         var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
+        var settings = Options.Create(new HackerNewsApiSettings
+        {
+            BaseUrl = "https://hacker-news.firebaseio.com/v0/", // will not be actually called
+            BestStoriesEndpoint = "beststories.json"
+        });
+
         memoryCacheMock.TryGetValue("item_1", out Arg.Any<Story?>())
                        .Returns(false); // indicate cache miss
 
         var story = new Story(1, "author", 1633036800, "Test Story", "https://example.com", 100, 50, "story");
-        
+
         var response = new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent(
@@ -128,16 +151,16 @@ public class HackerNewsClientTests
         var handler = new FakeHttpMessageHandler(response);
         var httpClient = new HttpClient(handler)
         {
-            BaseAddress = new Uri("https://hacker-news.firebaseio.com/v0/")
+            BaseAddress = new Uri(settings.Value.BaseUrl)
         };
         httpClientFactoryMock.CreateClient(Constants.HackerNewsHttpClientName)
                              .Returns(httpClient);
 
-        var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, "https://hacker-news.firebaseio.com/v0/beststories.json");
-        
+        var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, settings);
+
         // act
         var result = await client.GetStoryAsync(1, CancellationToken.None);
-        
+
         // assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(story);

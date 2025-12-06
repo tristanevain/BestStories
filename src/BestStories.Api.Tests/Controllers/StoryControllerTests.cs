@@ -1,6 +1,8 @@
 ﻿using BestStories.Api.Controllers;
 using BestStories.Api.Services;
+using BestStories.Api.Settings;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace BestStories.Api.Tests.Controllers;
@@ -12,7 +14,7 @@ public class StoryControllerTests
     {
         // arrange
         var storyServiceMock = Substitute.For<IStoryService>();
-        var controller = new StoriesController(storyServiceMock);
+        var controller = new StoriesController(storyServiceMock, Options.Create(new HackerNewsApiSettings()));
 
         // act
         var result = await controller.GetBestStories(0);
@@ -26,10 +28,11 @@ public class StoryControllerTests
     {
         // arrange
         var storyServiceMock = Substitute.For<IStoryService>();
-        var controller = new StoriesController(storyServiceMock);
+        var settings = Options.Create(new HackerNewsApiSettings { MaxN = 100 });
+        var controller = new StoriesController(storyServiceMock, settings);
 
         // act
-        var result = await controller.GetBestStories(Constants.MaxN + 1);
+        var result = await controller.GetBestStories(settings.Value.MaxN + 1);
 
         // assert
         Assert.IsType<BadRequestObjectResult>(result);
@@ -40,13 +43,14 @@ public class StoryControllerTests
     {
         // arrange
         var storyServiceMock = Substitute.For<IStoryService>();
-        var controller = new StoriesController(storyServiceMock);
+        var settings = Options.Create(new HackerNewsApiSettings { MaxN = 100 });
+        var controller = new StoriesController(storyServiceMock, settings);
 
         // act
-        var result = await controller.GetBestStories(Constants.MaxN);
+        var result = await controller.GetBestStories(settings.Value.MaxN);
 
         // assert
         Assert.IsType<OkObjectResult>(result);
-        await storyServiceMock.Received(1).GetTopStoriesByScoreAsync(Constants.MaxN, Arg.Any<CancellationToken>());
+        await storyServiceMock.Received(1).GetTopStoriesByScoreAsync(settings.Value.MaxN, Arg.Any<CancellationToken>());
     }
 }

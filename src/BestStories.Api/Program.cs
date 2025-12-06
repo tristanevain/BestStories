@@ -1,33 +1,29 @@
 using BestStories.Api;
 using BestStories.Api.Services;
+using BestStories.Api.Settings;
 using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var hackerNewsSettings = builder.Configuration.GetSection("HackerNews");
-var baseUrl = hackerNewsSettings.GetValue<string>("BaseUrl") 
-                ?? throw new InvalidOperationException("HackerNews:BaseUrl configuration is missing.");
-var bestStoriesEndpoint = hackerNewsSettings.GetValue<string>("BestStoriesEndpoint")
-                            ?? throw new InvalidOperationException("HackerNews:BestStoriesEndpoint configuration is missing.");
-
+var hackerNewsApiSettings = builder.Configuration
+    .GetSection(Constants.HackerNewsApiSettingsKey)
+    .Get<HackerNewsApiSettings>()
+    ?? throw new InvalidOperationException($"Configuration section '{Constants.HackerNewsApiSettingsKey}' is missing.");
 
 builder.Services.AddHttpClient(Constants.HackerNewsHttpClientName, client =>
 {
-    client.BaseAddress = new Uri(baseUrl);
+    client.BaseAddress = new Uri(hackerNewsApiSettings.BaseUrl);
     client.Timeout = TimeSpan.FromSeconds(10);
 });
 
 builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<IHackerNewsClient, HackerNewsClient>(sp =>
-{
-    var httpFactory = sp.GetRequiredService<IHttpClientFactory>();
-    var cache = sp.GetRequiredService<IMemoryCache>();
-
-    return new HackerNewsClient(httpFactory, cache, bestStoriesEndpoint);
-});
+builder.Services.AddSingleton<IHackerNewsClient, HackerNewsClient>();
 builder.Services.AddSingleton<IStoryService, StoryService>();
 
+builder.Services.Configure<HackerNewsApiSettings>(builder.Configuration.GetSection(Constants.HackerNewsApiSettingsKey));
+
 builder.Services.AddControllers();
+
 
 var app = builder.Build();
 

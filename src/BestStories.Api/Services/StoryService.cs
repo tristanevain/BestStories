@@ -1,13 +1,14 @@
 ﻿using BestStories.Api.Model.Dtos;
+using BestStories.Api.Settings;
+using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 
 namespace BestStories.Api.Services;
 
-public sealed class StoryService(IHackerNewsClient hackerNewsClient) : IStoryService
+public sealed class StoryService(IHackerNewsClient hackerNewsClient, IOptions<HackerNewsApiSettings> settings) : IStoryService
 {
     private readonly IHackerNewsClient _hackerNewsClient = hackerNewsClient;
-    private readonly int _maxStoriesToScan = 500; // todo: configurable
-    private readonly int _maxDegreeOfParallelism = 10; // todo: configurable
+    private readonly HackerNewsApiSettings _settings = settings.Value;
 
 
     public async Task<IEnumerable<StoryDto>> GetTopStoriesByScoreAsync(int n, CancellationToken ct)
@@ -16,10 +17,10 @@ public sealed class StoryService(IHackerNewsClient hackerNewsClient) : IStorySer
         if (ids.Length == 0)
             return [];
 
-        var idsToScan = ids.Take(_maxStoriesToScan);
+        var idsToScan = ids.Take(_settings.MaxStoriesToScan);
         var bag = new ConcurrentBag<StoryDto>();
 
-        using var sem = new SemaphoreSlim(_maxDegreeOfParallelism);
+        using var sem = new SemaphoreSlim(_settings.MaxDegreeOfParallelism);
 
         var tasks = idsToScan.Select(async id =>
         {

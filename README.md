@@ -34,7 +34,7 @@ Alternatively, you can use Docker:
 1. `docker run -p 5142:8080 best-stories-api`
 1. Open `http://localhost:5142/api/stories/best?n=10`
 
-You can also change configuration in `appsettings.json` (MaxScan, cache durations, parallelism).
+You can also change configuration in `appsettings.json` (MaxScan, cache durations, parallelism...).
 
 ---
 

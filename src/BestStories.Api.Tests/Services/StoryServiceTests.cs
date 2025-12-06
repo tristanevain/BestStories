@@ -1,5 +1,7 @@
 ﻿using BestStories.Api.Model;
 using BestStories.Api.Services;
+using BestStories.Api.Settings;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace BestStories.Api.Tests.Services;
@@ -11,7 +13,12 @@ public class StoryServiceTests
     {
         // arrange
         var hackerNewsClientMock = Substitute.For<IHackerNewsClient>();
-        var storyService = new StoryService(hackerNewsClientMock);
+        var settings = Options.Create(new HackerNewsApiSettings
+        {
+            MaxStoriesToScan = 100,
+            MaxDegreeOfParallelism = 4,
+        });
+        var storyService = new StoryService(hackerNewsClientMock, settings);
 
         var storyIds = new int[] { 1, 2, 3, 4, 5 };
         hackerNewsClientMock.GetBestStoriesIdsAsync(Arg.Any<CancellationToken>())
@@ -44,7 +51,13 @@ public class StoryServiceTests
     {
         // arrange
         var hackerNewsClientMock = Substitute.For<IHackerNewsClient>();
-        var storyService = new StoryService(hackerNewsClientMock);
+        var settings = Options.Create(new HackerNewsApiSettings
+        {
+            MaxStoriesToScan = 100,
+            MaxDegreeOfParallelism = 4,
+        });
+        var storyService = new StoryService(hackerNewsClientMock, settings);
+
         hackerNewsClientMock.GetBestStoriesIdsAsync(Arg.Any<CancellationToken>())
                             .Returns(Task.FromResult(Array.Empty<int>()));
         

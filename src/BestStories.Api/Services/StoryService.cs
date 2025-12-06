@@ -12,7 +12,7 @@ public sealed class StoryService(IHackerNewsClient hackerNewsClient) : IStorySer
 
     public async Task<IEnumerable<StoryDto>> GetTopStoriesByScoreAsync(int n, CancellationToken ct)
     {
-        var ids = await _hackerNewsClient.GetBestStoryIdsAsync(ct);
+        var ids = await _hackerNewsClient.GetBestStoriesIdsAsync(ct);
         if (ids.Length == 0)
             return [];
 

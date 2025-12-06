@@ -26,7 +26,7 @@ public class HackerNewsClientTests
         });
 
         var cachedIds = new int[] { 1, 2, 3, 4, 5 };
-        memoryCacheMock.TryGetValue("beststoryids", out Arg.Any<int[]?>())
+        memoryCacheMock.TryGetValue("beststoriesids", out Arg.Any<int[]?>())
                        .Returns(callInfo =>
                        {
                            callInfo[1] = cachedIds; // set out parameter
@@ -36,16 +36,16 @@ public class HackerNewsClientTests
         var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, settings);
 
         // act
-        var result = await client.GetBestStoryIdsAsync(CancellationToken.None);
+        var result = await client.GetBestStoriesIdsAsync(CancellationToken.None);
 
         // assert
         client.Should().NotBeNull();
-        result.Should().BeEquivalentTo(cachedIds);
+        result.Should().Equal(cachedIds);
         httpClientFactoryMock.DidNotReceive().CreateClient(Arg.Any<string>());
     }
 
     [Fact]
-    public async Task GetBestStoryIdsAsync_WhenCacheNotHit_CallsHackerNewsApi_AndStoresTheValueInCache()
+    public async Task GetBestStoriesIdsAsync_WhenCacheNotHit_CallsHackerNewsApi_AndStoresTheValueInCache()
     {
         // arrange
         var memoryCacheMock = Substitute.For<IMemoryCache>();
@@ -56,7 +56,7 @@ public class HackerNewsClientTests
             BestStoriesEndpoint = "beststories.json"
         });
 
-        memoryCacheMock.TryGetValue("beststoryids", out Arg.Any<int[]?>())
+        memoryCacheMock.TryGetValue("beststoriesids", out Arg.Any<int[]?>())
                        .Returns(false); // indicate cache miss
 
         var ids = new int[] { 1, 2, 3, 4, 5 };
@@ -79,15 +79,15 @@ public class HackerNewsClientTests
         var client = new HackerNewsClient(httpClientFactoryMock, memoryCacheMock, settings);
 
         // act
-        var result = await client.GetBestStoryIdsAsync(CancellationToken.None);
+        var result = await client.GetBestStoriesIdsAsync(CancellationToken.None);
 
         // assert
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(ids);
+        result.Should().Equal(ids);
         httpClientFactoryMock.Received(1)
                              .CreateClient(Arg.Any<string>());
         memoryCacheMock.Received(1)
-                       .Set("beststoryids",
+                       .Set("beststoriesids",
                            ids,
                            TimeSpan.FromSeconds(30));
     }
@@ -120,7 +120,7 @@ public class HackerNewsClientTests
 
         // assert
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(cachedStory);
+        result.Should().BeSameAs(cachedStory);
         httpClientFactoryMock.DidNotReceive().CreateClient(Arg.Any<string>());
     }
 

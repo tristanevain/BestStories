@@ -18,7 +18,7 @@ This repository contains a minimal ASP.NET Core implementation that exposes a RE
   * `IHttpClientFactory` to reuse connections.
   * An in-memory `IMemoryCache` with a short TTL for the list of IDs and a longer TTL for individual story details.
   * Bounded parallelism (using a SemaphoreSlim) when fetching story details.
-* We cap caller `n` to a reasonable maximum (100). Validation returns `400 Bad Request` for invalid values.
+* We cap caller `n` to a reasonable maximum (100, configurable). Validation returns `400 Bad Request` for invalid values.
 
 ---
 
@@ -40,6 +40,7 @@ You can also change configuration in `appsettings.json` (MaxScan, cache duration
 
 ## Possible enhancements
 
+* Separate layers into dedicated projects (API, Services, Clients...).
 * Use Polly for retries
   * Optional rate limiting / backoff could be added
 * Add a background refresh job to keep the top stories cached and serve instantly.

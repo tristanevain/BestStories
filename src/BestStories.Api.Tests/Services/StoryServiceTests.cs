@@ -14,7 +14,7 @@ public class StoryServiceTests
         var storyService = new StoryService(hackerNewsClientMock);
 
         var storyIds = new int[] { 1, 2, 3, 4, 5 };
-        hackerNewsClientMock.GetBestStoryIdsAsync(Arg.Any<CancellationToken>())
+        hackerNewsClientMock.GetBestStoriesIdsAsync(Arg.Any<CancellationToken>())
                             .Returns(Task.FromResult(storyIds));
         
         var stories = new Dictionary<int, Story>
@@ -45,7 +45,7 @@ public class StoryServiceTests
         // arrange
         var hackerNewsClientMock = Substitute.For<IHackerNewsClient>();
         var storyService = new StoryService(hackerNewsClientMock);
-        hackerNewsClientMock.GetBestStoryIdsAsync(Arg.Any<CancellationToken>())
+        hackerNewsClientMock.GetBestStoriesIdsAsync(Arg.Any<CancellationToken>())
                             .Returns(Task.FromResult(Array.Empty<int>()));
         
         // act

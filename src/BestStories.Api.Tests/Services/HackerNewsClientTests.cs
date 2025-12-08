@@ -21,8 +21,8 @@ public class HackerNewsClientTests
         var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
         var settings = Options.Create(new HackerNewsApiSettings
         {
-            BaseUrl = "https://hacker-news.firebaseio.com/v0/", // will not be actually called
-            BestStoriesEndpoint = "beststories.json"
+            BaseUrl = "https://bla.bla", // will not be actually called
+            BestStoriesEndpoint = "some.thing"
         });
 
         var cachedIds = new int[] { 1, 2, 3, 4, 5 };
@@ -52,8 +52,8 @@ public class HackerNewsClientTests
         var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
         var settings = Options.Create(new HackerNewsApiSettings
         {
-            BaseUrl = "https://hacker-news.firebaseio.com/v0/", // will not be actually called
-            BestStoriesEndpoint = "beststories.json"
+            BaseUrl = "https://bla.bla", // will not be actually called
+            BestStoriesEndpoint = "some.thing"
         });
 
         memoryCacheMock.TryGetValue("beststoriesids", out Arg.Any<int[]?>())
@@ -100,8 +100,8 @@ public class HackerNewsClientTests
         var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
         var settings = Options.Create(new HackerNewsApiSettings
         {
-            BaseUrl = "https://hacker-news.firebaseio.com/v0/", // will not be actually called
-            BestStoriesEndpoint = "beststories.json"
+            BaseUrl = "https://bla.bla", // will not be actually called
+            BestStoriesEndpoint = "some.thing"
         });
 
         var cachedStory = new Story(1, "author", 1633036800, "Test Story", "https://example.com", 100, 50, "story");
@@ -132,8 +132,8 @@ public class HackerNewsClientTests
         var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
         var settings = Options.Create(new HackerNewsApiSettings
         {
-            BaseUrl = "https://hacker-news.firebaseio.com/v0/", // will not be actually called
-            BestStoriesEndpoint = "beststories.json"
+            BaseUrl = "https://bla.bla", // will not be actually called
+            BestStoriesEndpoint = "some.thing"
         });
 
         memoryCacheMock.TryGetValue("item_1", out Arg.Any<Story?>())
